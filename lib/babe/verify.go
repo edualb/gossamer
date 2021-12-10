@@ -7,8 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"reflect"
 	"sync"
 
+	"github.com/ChainSafe/gossamer/dot/state"
 	"github.com/ChainSafe/gossamer/dot/types"
 	"github.com/ChainSafe/gossamer/lib/common"
 	"github.com/ChainSafe/gossamer/lib/crypto/sr25519"
@@ -47,11 +49,25 @@ type VerificationManager struct {
 
 // NewVerificationManager returns a new NewVerificationManager
 func NewVerificationManager(blockState BlockState, epochState EpochState) (*VerificationManager, error) {
-	if blockState == nil {
+	var isNilBlock bool
+	switch blockState.(type) {
+	case *state.BlockState:
+		isNilBlock = blockState == (*state.BlockState)(nil)
+	default:
+		isNilBlock = reflect.ValueOf(blockState).IsNil()
+	}
+	if isNilBlock {
 		return nil, errNilBlockState
 	}
 
-	if epochState == nil {
+	var isNilEpoch bool
+	switch epochState.(type) {
+	case *state.EpochState:
+		isNilEpoch = epochState == (*state.EpochState)(nil)
+	default:
+		isNilEpoch = reflect.ValueOf(epochState).IsNil()
+	}
+	if isNilEpoch {
 		return nil, errNilEpochState
 	}
 

@@ -30,9 +30,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestBuildFromGenesis(t *testing.T) {
-	t.Parallel()
+const genesisLocation = "../chain/gssmr/genesis.json"
 
+func TestBuildFromGenesis_Integration(t *testing.T) {
 	file, err := genesis.CreateTestGenesisJSONFile(false)
 	defer os.Remove(file)
 	require.NoError(t, err)
@@ -74,16 +74,12 @@ func TestBuildFromGenesis(t *testing.T) {
 }
 
 func TestBuildFromGenesis_WhenGenesisDoesNotExists(t *testing.T) {
-	t.Parallel()
-
 	bs, err := BuildFromGenesis("/not/exists/genesis.json", 0)
 	require.Nil(t, bs)
 	require.Error(t, err, os.ErrNotExist)
 }
 
 func TestWriteGenesisSpecFileWhenFileAlreadyExists(t *testing.T) {
-	t.Parallel()
-
 	f, err := ioutil.TempFile("", "existing file data")
 	require.NoError(t, err)
 	defer os.Remove(f.Name())
@@ -95,11 +91,9 @@ func TestWriteGenesisSpecFileWhenFileAlreadyExists(t *testing.T) {
 		fmt.Sprintf("file %s already exists, rename to avoid overwritten", f.Name()))
 }
 
-func TestWriteGenesisSpecFile(t *testing.T) {
-	t.Parallel()
-
+func TestWriteGenesisSpecFile_Integration(t *testing.T) {
 	cfg := NewTestConfig(t)
-	cfg.Init.Genesis = "../chain/gssmr/genesis.json"
+	cfg.Init.Genesis = genesisLocation
 
 	expected, err := genesis.NewGenesisFromJSONRaw(cfg.Init.Genesis)
 	require.NoError(t, err)
@@ -141,12 +135,10 @@ func TestWriteGenesisSpecFile(t *testing.T) {
 	}
 }
 
-func TestBuildFromDB(t *testing.T) {
-	t.Parallel()
-
+func TestBuildFromDB_Integration(t *testing.T) {
 	// setup expected
 	cfg := NewTestConfig(t)
-	cfg.Init.Genesis = "../chain/gssmr/genesis.json"
+	cfg.Init.Genesis = genesisLocation
 	expected, err := genesis.NewGenesisFromJSONRaw(cfg.Init.Genesis)
 	require.NoError(t, err)
 	// initialise node (initialise state database and load genesis data)
