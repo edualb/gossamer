@@ -203,7 +203,7 @@ func (nodeInterface) createBABEService(cfg *Config, st *state.Service, ks keysto
 // Core Service
 
 // createCoreService creates the core service from the provided core configuration
-func createCoreService(cfg *Config, ks *keystore.GlobalKeystore,
+func (nodeInterface) createCoreService(cfg *Config, ks *keystore.GlobalKeystore,
 	st *state.Service, net *network.Service, dh *digest.Handler) (
 	*core.Service, error) {
 	logger.Debug("creating core service" +
@@ -290,7 +290,7 @@ func (nodeInterface) createNetworkService(cfg *Config, stateSrvc *state.Service)
 // RPC Service
 
 // createRPCService creates the RPC service from the provided core configuration
-func createRPCService(cfg *Config, ns *runtime.NodeStorage, stateSrvc *state.Service,
+func (nodeInterface) createRPCService(cfg *Config, ns *runtime.NodeStorage, stateSrvc *state.Service,
 	coreSrvc *core.Service, networkSrvc *network.Service, bp modules.BlockProducerAPI,
 	sysSrvc *system.Service, finSrvc *grandpa.Service) (*rpc.HTTPServer, error) {
 	logger.Infof(
@@ -351,7 +351,7 @@ func (nodeInterface) createSystemService(cfg *types.SystemInfo, stateSrvc *state
 }
 
 // createGRANDPAService creates a new GRANDPA service
-func createGRANDPAService(cfg *Config, st *state.Service, dh *digest.Handler,
+func (nodeInterface) createGRANDPAService(cfg *Config, st *state.Service, dh *digest.Handler,
 	ks keystore.Keystore, net *network.Service) (*grandpa.Service, error) {
 	rt, err := st.Block.GetRuntime(nil)
 	if err != nil {
@@ -401,7 +401,7 @@ func (nodeInterface) createBlockVerifier(st *state.Service) (*babe.VerificationM
 	return ver, nil
 }
 
-func newSyncService(cfg *Config, st *state.Service, fg sync.FinalityGadget,
+func (nodeInterface) newSyncService(cfg *Config, st *state.Service, fg sync.FinalityGadget,
 	verifier *babe.VerificationManager, cs *core.Service, net *network.Service) (
 	*sync.Service, error) {
 	slotDuration, err := st.Epoch.GetSlotDuration()

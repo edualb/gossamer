@@ -112,7 +112,7 @@ func TestLoadGlobalNodeName(t *testing.T) {
 	}
 }
 
-func TestNewNodeC(t *testing.T) {
+func TestNewNode(t *testing.T) {
 	cfg := NewTestConfig(t)
 	require.NotNil(t, cfg)
 	defer utils.RemoveTestDir(t)
@@ -235,64 +235,6 @@ func TestNewNodeMock(t *testing.T) {
 
 			if tt.want != nil {
 				assert.Equal(t, tt.want, got)
-			}
-		})
-	}
-}
-
-func TestNewNode(t *testing.T) {
-	cfg := NewTestConfig(t)
-	require.NotNil(t, cfg)
-
-	genFile := NewTestGenesisRawFile(t, cfg)
-	require.NotNil(t, genFile)
-
-	defer utils.RemoveTestDir(t)
-
-	cfg.Init.Genesis = genFile.Name()
-
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
-	require.NoError(t, err)
-
-	ks := keystore.NewGlobalKeystore()
-	err = keystore.LoadKeystore("alice", ks.Gran)
-	require.NoError(t, err)
-	err = keystore.LoadKeystore("alice", ks.Babe)
-	require.NoError(t, err)
-
-	cfg.Core.Roles = types.FullNodeRole
-
-	type args struct {
-		cfg *Config
-		ks  *keystore.GlobalKeystore
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Node
-		err  error
-	}{
-		{
-			name: "working example",
-			args: args{
-				cfg: cfg,
-				ks:  ks,
-			},
-			want: &Node{Name: "Gossamer"},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewNode(tt.args.cfg, tt.args.ks, tt.args.stopFunc)
-			if tt.err != nil {
-				assert.EqualError(t, err, tt.err.Error())
-			} else {
-				assert.NoError(t, err)
-			}
-
-			if tt.want != nil {
-				assert.Equal(t, tt.want.Name, got.Name)
 			}
 		})
 	}

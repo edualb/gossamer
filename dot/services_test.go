@@ -19,6 +19,7 @@ import (
 	"github.com/ChainSafe/gossamer/dot/system"
 	"github.com/ChainSafe/gossamer/dot/types"
 	"github.com/ChainSafe/gossamer/lib/babe"
+	"github.com/ChainSafe/gossamer/lib/crypto"
 	"github.com/ChainSafe/gossamer/lib/grandpa"
 	"github.com/ChainSafe/gossamer/lib/keystore"
 	"github.com/ChainSafe/gossamer/lib/runtime"
