@@ -5,6 +5,7 @@ package dot
 
 import (
 	"errors"
+	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
 
@@ -118,8 +119,8 @@ func TestBuildFromDB(t *testing.T) {
 	// initialise node (initialise state database and load genesis data)
 	cfg := NewTestConfig(t)
 	cfg.Init.Genesis = "../chain/gssmr/genesis.json"
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInterface := nodeInterface{}
+	err := nodeInterface.initNode(cfg)
 	assert.NoError(t, err)
 
 	type args struct {
@@ -157,7 +158,7 @@ func TestBuildFromDB(t *testing.T) {
 func TestBuildFromGenesis(t *testing.T) {
 	// setup test file
 	file, err := genesis.CreateTestGenesisJSONFile(false)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer os.Remove(file)
 
 	type args struct {
@@ -245,7 +246,7 @@ func TestBuildSpec_ToJSONRaw(t *testing.T) {
 }
 
 func TestWriteGenesisSpecFile(t *testing.T) {
-	file, err := os.Create("test.txt")
+	file, err := os.CreateTemp("", "test.txt")
 	assert.NoError(t, err)
 	defer os.Remove(file.Name())
 
@@ -265,7 +266,7 @@ func TestWriteGenesisSpecFile(t *testing.T) {
 		{name: "existing file", args: args{
 			data: []byte{1},
 			fp:   file.Name(),
-		}, err: errors.New("file test.txt already exists, rename to avoid overwriting")},
+		}, err: errors.New("file " + file.Name() + " already exists, rename to avoid overwriting")},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -275,7 +276,9 @@ func TestWriteGenesisSpecFile(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
-			os.Remove(tt.args.fp)
+			if tt.args.fp != "" {
+				os.Remove(tt.args.fp)
+			}
 		})
 	}
 }

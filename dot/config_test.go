@@ -26,7 +26,10 @@ func TestDevConfig(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := DevConfig()
 			assert.Equal(t, tt.want.Global.ID, got.Global.ID)
 		})
@@ -50,7 +53,9 @@ func TestGssmrConfig(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got := GssmrConfig()
 			assert.Equal(t, tt.want.Global.ID, got.Global.ID)
 		})
@@ -74,7 +79,9 @@ func TestKusamaConfig(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got := KusamaConfig()
 			assert.Equal(t, tt.want.Global.ID, got.Global.ID)
 		})
@@ -98,7 +105,9 @@ func TestPolkadotConfig(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got := PolkadotConfig()
 			assert.Equal(t, tt.want.Global.ID, got.Global.ID)
 		})
@@ -109,18 +118,10 @@ func TestRPCConfig_isRPCEnabled(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
-		Enabled          bool
-		External         bool
-		Unsafe           bool
-		UnsafeExternal   bool
-		Port             uint32
-		Host             string
-		Modules          []string
-		WSPort           uint32
-		WS               bool
-		WSExternal       bool
-		WSUnsafe         bool
-		WSUnsafeExternal bool
+		Enabled        bool
+		External       bool
+		Unsafe         bool
+		UnsafeExternal bool
 	}
 	tests := []struct {
 		name   string
@@ -153,20 +154,14 @@ func TestRPCConfig_isRPCEnabled(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			r := &RPCConfig{
-				Enabled:          tt.fields.Enabled,
-				External:         tt.fields.External,
-				Unsafe:           tt.fields.Unsafe,
-				UnsafeExternal:   tt.fields.UnsafeExternal,
-				Port:             tt.fields.Port,
-				Host:             tt.fields.Host,
-				Modules:          tt.fields.Modules,
-				WSPort:           tt.fields.WSPort,
-				WS:               tt.fields.WS,
-				WSExternal:       tt.fields.WSExternal,
-				WSUnsafe:         tt.fields.WSUnsafe,
-				WSUnsafeExternal: tt.fields.WSUnsafeExternal,
+				Enabled:        tt.fields.Enabled,
+				External:       tt.fields.External,
+				Unsafe:         tt.fields.Unsafe,
+				UnsafeExternal: tt.fields.UnsafeExternal,
 			}
 			got := r.isRPCEnabled()
 			assert.Equal(t, tt.want, got)
@@ -178,14 +173,6 @@ func TestRPCConfig_isWSEnabled(t *testing.T) {
 	t.Parallel()
 
 	type fields struct {
-		Enabled          bool
-		External         bool
-		Unsafe           bool
-		UnsafeExternal   bool
-		Port             uint32
-		Host             string
-		Modules          []string
-		WSPort           uint32
 		WS               bool
 		WSExternal       bool
 		WSUnsafe         bool
@@ -222,16 +209,10 @@ func TestRPCConfig_isWSEnabled(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			r := &RPCConfig{
-				Enabled:          tt.fields.Enabled,
-				External:         tt.fields.External,
-				Unsafe:           tt.fields.Unsafe,
-				UnsafeExternal:   tt.fields.UnsafeExternal,
-				Port:             tt.fields.Port,
-				Host:             tt.fields.Host,
-				Modules:          tt.fields.Modules,
-				WSPort:           tt.fields.WSPort,
 				WS:               tt.fields.WS,
 				WSExternal:       tt.fields.WSExternal,
 				WSUnsafe:         tt.fields.WSUnsafe,
@@ -284,7 +265,9 @@ func Test_networkServiceEnabled(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got := networkServiceEnabled(tt.args.cfg)
 			assert.Equal(t, tt.want, got)
 		})
