@@ -92,7 +92,7 @@ func NewService(cfg *Config) (*Service, error) {
 
 	var isNilNetwork bool
 	switch cfg.Network.(type) {
-	case Network:
+	case *network.Service:
 		isNilNetwork = cfg.Network == (*network.Service)(nil)
 	default:
 		isNilNetwork = reflect.ValueOf(cfg.Network).IsNil()
