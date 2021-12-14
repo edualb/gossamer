@@ -18,6 +18,7 @@ import (
 	"github.com/ChainSafe/gossamer/lib/babe"
 	"github.com/ChainSafe/gossamer/lib/common"
 	"github.com/ChainSafe/gossamer/lib/grandpa"
+	"github.com/ChainSafe/gossamer/lib/keystore"
 	"github.com/ChainSafe/gossamer/lib/runtime"
 	"github.com/ChainSafe/gossamer/lib/runtime/wasmer"
 	"github.com/ChainSafe/gossamer/lib/utils"
@@ -146,7 +147,7 @@ func TestNewNode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ks, err := InitKeystore(tt.args.cfg)
+			ks, err := initKeystore(tt.args.cfg)
 			assert.NoError(t, err)
 			got, err := NewNode(tt.args.cfg, ks)
 			if tt.err != nil {
@@ -200,7 +201,7 @@ func TestNewNodeMock(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ks, err := InitKeystore(tt.args.cfg)
+			ks, err := initKeystore(tt.args.cfg)
 			assert.NoError(t, err)
 			m := NewMocknewNodeIface(ctrl)
 			m.EXPECT().nodeInitialised(tt.args.cfg.Global.BasePath).Return(true)
@@ -281,4 +282,33 @@ func TestNodeInitialized(t *testing.T) {
 			}
 		})
 	}
+}
+
+func initKeystore(cfg *Config) (*keystore.GlobalKeystore, error) {
+	ks := keystore.NewGlobalKeystore()
+	// load built-in test keys if specified by `cfg.Account.Key`
+	err := keystore.LoadKeystore(cfg.Account.Key, ks.Acco)
+	if err != nil {
+		logger.Errorf("failed to load account keystore: %s", err)
+		return nil, err
+	}
+
+	err = keystore.LoadKeystore(cfg.Account.Key, ks.Babe)
+	if err != nil {
+		logger.Errorf("failed to load BABE keystore: %s", err)
+		return nil, err
+	}
+
+	err = keystore.LoadKeystore(cfg.Account.Key, ks.Gran)
+	if err != nil {
+		logger.Errorf("failed to load grandpa keystore: %s", err)
+		return nil, err
+	}
+
+	// if authority node, should have at least 1 key in keystore
+	if cfg.Core.Roles == types.AuthorityRole && (ks.Babe.Size() == 0 || ks.Gran.Size() == 0) {
+		return nil, ErrNoKeysProvided
+	}
+
+	return ks, nil
 }

@@ -404,36 +404,6 @@ func (node) initialiseTelemetry(cfg *Config, stateSrvc *state.Service, networkSr
 	}
 }
 
-//InitKeystore to initialize node keystore
-func InitKeystore(cfg *Config) (*keystore.GlobalKeystore, error) {
-	ks := keystore.NewGlobalKeystore()
-	// load built-in test keys if specified by `cfg.Account.Key`
-	err := keystore.LoadKeystore(cfg.Account.Key, ks.Acco)
-	if err != nil {
-		logger.Errorf("failed to load account keystore: %s", err)
-		return nil, err
-	}
-
-	err = keystore.LoadKeystore(cfg.Account.Key, ks.Babe)
-	if err != nil {
-		logger.Errorf("failed to load BABE keystore: %s", err)
-		return nil, err
-	}
-
-	err = keystore.LoadKeystore(cfg.Account.Key, ks.Gran)
-	if err != nil {
-		logger.Errorf("failed to load grandpa keystore: %s", err)
-		return nil, err
-	}
-
-	// if authority node, should have at least 1 key in keystore
-	if cfg.Core.Roles == types.AuthorityRole && (ks.Babe.Size() == 0 || ks.Gran.Size() == 0) {
-		return nil, ErrNoKeysProvided
-	}
-
-	return ks, nil
-}
-
 // stores the global node name to reuse
 func storeGlobalNodeName(name, basepath string) (err error) {
 	db, err := utils.SetupDatabase(basepath, false)
