@@ -90,6 +90,7 @@ func NewService(cfg *Config) (*Service, error) {
 		return nil, ErrNilStorageState
 	}
 
+	// check if interface cfg.Network is nil
 	var isNilNetwork bool
 	switch cfg.Network.(type) {
 	case *network.Service:

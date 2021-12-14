@@ -164,6 +164,7 @@ func Test_newTrieFromPairs(t *testing.T) {
 	}
 }
 
+// setupStateFile builds state blob for kusama block 1482002
 func setupStateFile(t *testing.T) string {
 	filename := "../lib/runtime/test_data/kusama/block1482002.out"
 
@@ -185,6 +186,7 @@ func setupStateFile(t *testing.T) string {
 	return fp
 }
 
+// setupHeaderFile builds header blob for kusama test block
 func setupHeaderFile(t *testing.T) string {
 	headerStr := "{\"digest\":{\"logs\":[\"0x0642414245b501013c0000009659bd0f0000000070edad1c9064fff78cb18435223d8ada" +
 		"f5ea04c24b1a8766e3dc01eb03cc6a0c11b79793d4e31cc0990838229c44fed1669a7c7c79e1e6d0a96374d6496728069d1ef739e290" +
