@@ -50,8 +50,8 @@ func TestInitNode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ni := nodeInterface{}
-			err := ni.initNode(tt.args.cfg)
+			nodeInstance := node{}
+			err := nodeInstance.initNode(tt.args.cfg)
 
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
@@ -251,8 +251,8 @@ func TestNodeInitialized(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
 	type args struct {

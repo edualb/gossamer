@@ -5,12 +5,12 @@ package dot
 
 import (
 	"errors"
-	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
 
 	"github.com/ChainSafe/gossamer/lib/genesis"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBuildSpec_ToJSON(t *testing.T) {
@@ -119,8 +119,8 @@ func TestBuildFromDB(t *testing.T) {
 	// initialise node (initialise state database and load genesis data)
 	cfg := NewTestConfig(t)
 	cfg.Init.Genesis = "../chain/gssmr/genesis.json"
-	nodeInterface := nodeInterface{}
-	err := nodeInterface.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	assert.NoError(t, err)
 
 	type args struct {

@@ -74,16 +74,16 @@ type newNodeIface interface {
 	initialiseTelemetry(cfg *Config, stateSrvc *state.Service, networkSrvc *network.Service, sysSrvc *system.Service)
 }
 
-type nodeInterface struct{}
+type node struct{}
 
 // NodeInitialized returns true if, within the configured data directory for the
 // node, the state database has been created and the genesis data has been loaded
 func NodeInitialized(basepath string) bool {
-	nodeI := nodeInterface{}
-	return nodeI.nodeInitialised(basepath)
+	nodeInstance := node{}
+	return nodeInstance.nodeInitialised(basepath)
 }
 
-func (nodeInterface) nodeInitialised(basepath string) bool {
+func (node) nodeInitialised(basepath string) bool {
 	// check if key registry exists
 	registry := path.Join(basepath, utils.DefaultDatabaseDir, "KEYREGISTRY")
 
@@ -122,13 +122,13 @@ func (nodeInterface) nodeInitialised(basepath string) bool {
 
 // InitNode initialise the node with given Config
 func InitNode(cfg *Config) error {
-	nodeI := nodeInterface{}
-	return nodeI.initNode(cfg)
+	nodeInstance := node{}
+	return nodeInstance.initNode(cfg)
 }
 
 // InitNode initialises a new dot node from the provided dot node configuration
 // and JSON formatted genesis file.
-func (nodeInterface) initNode(cfg *Config) error {
+func (node) initNode(cfg *Config) error {
 	logger.Patch(log.SetLevel(cfg.Global.LogLvl))
 	logger.Infof(
 		"🕸️ initialising node with name %s, id %s, base path %s and genesis %s...",
@@ -216,7 +216,7 @@ func LoadGlobalNodeName(basepath string) (nodename string, err error) {
 
 // NewNode to create node based on given Config
 func NewNode(cfg *Config, ks *keystore.GlobalKeystore) (*Node, error) {
-	return newNode(cfg, ks, nodeInterface{})
+	return newNode(cfg, ks, node{})
 }
 
 func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, error) {
@@ -364,7 +364,7 @@ func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, 
 	return node, nil
 }
 
-func (nodeInterface) initialiseTelemetry(cfg *Config, stateSrvc *state.Service, networkSrvc *network.Service,
+func (node) initialiseTelemetry(cfg *Config, stateSrvc *state.Service, networkSrvc *network.Service,
 	sysSrvc *system.Service) {
 	gd, err := stateSrvc.Base.LoadGenesisData()
 	if err != nil {
@@ -488,7 +488,7 @@ func (n *Node) Stop() {
 	n.wg.Done()
 }
 
-func (nodeInterface) loadRuntime(cfg *Config, ns *runtime.NodeStorage,
+func (node) loadRuntime(cfg *Config, ns *runtime.NodeStorage,
 	stateSrvc *state.Service, ks *keystore.GlobalKeystore,
 	net *network.Service) error {
 	blocks := stateSrvc.Block.GetNonFinalisedBlocks()

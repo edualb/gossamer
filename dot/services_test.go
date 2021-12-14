@@ -42,11 +42,11 @@ func Test_createBABEService(t *testing.T) {
 	cfg.Core.Roles = types.FullNodeRole
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	ks := keystore.NewGlobalKeystore()
@@ -54,15 +54,15 @@ func Test_createBABEService(t *testing.T) {
 	require.NoError(t, err)
 	ks.Babe.Insert(kr.Alice())
 
-	ns, err := ni.createRuntimeStorage(stateSrvc)
+	ns, err := nodeInstance.createRuntimeStorage(stateSrvc)
 	require.NoError(t, err)
-	err = ni.loadRuntime(cfg, ns, stateSrvc, ks, &network.Service{})
-	require.NoError(t, err)
-
-	dh, err := ni.createDigestHandler(stateSrvc)
+	err = nodeInstance.loadRuntime(cfg, ns, stateSrvc, ks, &network.Service{})
 	require.NoError(t, err)
 
-	coreSrvc, err := ni.createCoreService(cfg, ks, stateSrvc, &network.Service{}, dh)
+	dh, err := nodeInstance.createDigestHandler(stateSrvc)
+	require.NoError(t, err)
+
+	coreSrvc, err := nodeInstance.createCoreService(cfg, ks, stateSrvc, &network.Service{}, dh)
 	require.NoError(t, err)
 
 	type args struct {
@@ -100,7 +100,7 @@ func Test_createBABEService(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createBABEService(tt.args.cfg, tt.args.st, tt.args.ks, tt.args.cs)
+			got, err := nodeInstance.createBABEService(tt.args.cfg, tt.args.st, tt.args.ks, tt.args.cs)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {
@@ -125,11 +125,11 @@ func Test_createBlockVerifier(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	type args struct {
@@ -154,7 +154,7 @@ func Test_createBlockVerifier(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createBlockVerifier(tt.args.st)
+			got, err := nodeInstance.createBlockVerifier(tt.args.st)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {
@@ -182,14 +182,14 @@ func Test_createCoreService(t *testing.T) {
 	cfg.Core.GrandpaAuthority = false
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
-	networkSrvc, err := ni.createNetworkService(cfg, stateSrvc)
+	networkSrvc, err := nodeInstance.createNetworkService(cfg, stateSrvc)
 	require.NoError(t, err)
 
 	ks := keystore.NewGlobalKeystore()
@@ -231,7 +231,7 @@ func Test_createCoreService(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createCoreService(tt.args.cfg, tt.args.ks, tt.args.st, tt.args.net, tt.args.dh)
+			got, err := nodeInstance.createCoreService(tt.args.cfg, tt.args.ks, tt.args.st, tt.args.net, tt.args.dh)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {
@@ -255,11 +255,11 @@ func Test_createDigestHandler(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	type args struct {
@@ -279,7 +279,7 @@ func Test_createDigestHandler(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createDigestHandler(tt.args.st)
+			got, err := nodeInstance.createDigestHandler(tt.args.st)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {
@@ -379,11 +379,11 @@ func Test_createNetworkService(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	type args struct {
@@ -407,7 +407,7 @@ func Test_createNetworkService(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createNetworkService(tt.args.cfg, tt.args.stateSrvc)
+			got, err := nodeInstance.createNetworkService(tt.args.cfg, tt.args.stateSrvc)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {
@@ -435,11 +435,11 @@ func Test_createRPCService(t *testing.T) {
 	cfg.Core.GrandpaAuthority = false
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	type args struct {
@@ -469,7 +469,7 @@ func Test_createRPCService(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createRPCService(tt.args.cfg, tt.args.ns, tt.args.stateSrvc, tt.args.coreSrvc,
+			got, err := nodeInstance.createRPCService(tt.args.cfg, tt.args.ns, tt.args.stateSrvc, tt.args.coreSrvc,
 				tt.args.networkSrvc, tt.args.bp, tt.args.sysSrvc, tt.args.finSrvc)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
@@ -495,11 +495,11 @@ func Test_createRuntime(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	_ = wasmer.NewTestInstance(t, runtime.NODE_RUNTIME)
@@ -577,11 +577,11 @@ func Test_createRuntimeStorage(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	type args struct {
@@ -601,7 +601,7 @@ func Test_createRuntimeStorage(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createRuntimeStorage(tt.args.st)
+			got, err := nodeInstance.createRuntimeStorage(tt.args.st)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {
@@ -626,8 +626,8 @@ func Test_createStateService(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
 	cfg2 := NewTestConfig(t)
@@ -655,7 +655,7 @@ func Test_createStateService(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createStateService(tt.args.cfg)
+			got, err := nodeInstance.createStateService(tt.args.cfg)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {
@@ -680,11 +680,11 @@ func Test_createSystemService(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	type args struct {
@@ -707,7 +707,7 @@ func Test_createSystemService(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.createSystemService(tt.args.cfg, tt.args.stateSrvc)
+			got, err := nodeInstance.createSystemService(tt.args.cfg, tt.args.stateSrvc)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {
@@ -766,11 +766,11 @@ func Test_newSyncService(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	ni := nodeInterface{}
-	err := ni.initNode(cfg)
+	nodeInstance := node{}
+	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
-	stateSrvc, err := ni.createStateService(cfg)
+	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
 	type args struct {
@@ -807,7 +807,8 @@ func Test_newSyncService(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ni.newSyncService(tt.args.cfg, tt.args.st, tt.args.fg, tt.args.verifier, tt.args.cs, tt.args.net)
+			got, err := nodeInstance.newSyncService(tt.args.cfg, tt.args.st, tt.args.fg, tt.args.verifier, tt.args.cs,
+				tt.args.net)
 			if tt.err != nil {
 				assert.EqualError(t, err, tt.err.Error())
 			} else {

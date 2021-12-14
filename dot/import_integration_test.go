@@ -7,7 +7,6 @@
 package dot
 
 import (
-	"io/ioutil"
 	"math/big"
 	"os"
 	"testing"
@@ -56,8 +55,7 @@ func TestNewHeaderFromFile(t *testing.T) {
 }
 
 func TestImportState_Integration(t *testing.T) {
-	basepath, err := ioutil.TempDir("", "gossamer-test-*")
-	require.NoError(t, err)
+	basepath := os.TempDir()
 
 	cfg := NewTestConfig(t)
 	require.NotNil(t, cfg)
