@@ -1,27 +1,15 @@
+// Copyright 2021 ChainSafe Systems (ON)
+// SPDX-License-Identifier: LGPL-3.0-only
+
 //go:build integration
 // +build integration
-
-// Copyright 2020 ChainSafe Systems (ON) Corp.
-// This file is part of gossamer.
-//
-// The gossamer library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// The gossamer library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with the gossamer library. If not, see <http://www.gnu.org/licenses/>.
 
 package dot
 
 import (
 	"io/ioutil"
 	"math/big"
+	"os"
 	"testing"
 
 	"github.com/ChainSafe/gossamer/dot/types"
@@ -34,11 +22,11 @@ import (
 
 func TestNewTrieFromPairs(t *testing.T) {
 	fp := setupStateFile(t)
-	tr, err := newTrieFromPairs(fp)
+	trie, err := newTrieFromPairs(fp)
 	require.NoError(t, err)
 
 	expectedRoot := common.MustHexToHash("0x09f9ca28df0560c2291aa16b56e15e07d1e1927088f51356d522722aa90ca7cb")
-	require.Equal(t, expectedRoot, tr.MustHash())
+	require.Equal(t, expectedRoot, trie.MustHash())
 }
 
 func TestNewHeaderFromFile(t *testing.T) {
@@ -82,13 +70,13 @@ func TestImportState_Integration(t *testing.T) {
 	cfg.Init.Genesis = genFile.Name()
 
 	cfg.Global.BasePath = basepath
-	err = InitNode(cfg)
+	err := InitNode(cfg)
 	require.NoError(t, err)
 
 	stateFP := setupStateFile(t)
 	headerFP := setupHeaderFile(t)
 
-	firstSlot := uint64(262493679)
+	const firstSlot = uint64(262493679)
 	err = ImportState(basepath, stateFP, headerFP, firstSlot)
 	require.NoError(t, err)
 }
