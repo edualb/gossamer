@@ -37,7 +37,7 @@ func TestCreateStateService(t *testing.T) {
 	err := InitNode(cfg)
 	require.Nil(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.Nil(t, err)
 	require.NotNil(t, stateSrvc)
@@ -61,7 +61,7 @@ func TestCreateCoreService(t *testing.T) {
 	err := InitNode(cfg)
 	require.NoError(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
@@ -94,7 +94,7 @@ func TestCreateBlockVerifier(t *testing.T) {
 	err := InitNode(cfg)
 	require.NoError(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
@@ -116,7 +116,7 @@ func TestCreateSyncService(t *testing.T) {
 	err := InitNode(cfg)
 	require.NoError(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
@@ -151,7 +151,7 @@ func TestCreateNetworkService(t *testing.T) {
 	err := InitNode(cfg)
 	require.NoError(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
@@ -178,7 +178,7 @@ func TestCreateRPCService(t *testing.T) {
 	err := InitNode(cfg)
 	require.NoError(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
@@ -222,7 +222,7 @@ func TestCreateBABEService(t *testing.T) {
 	err := InitNode(cfg)
 	require.NoError(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
@@ -262,7 +262,7 @@ func TestCreateGrandpaService(t *testing.T) {
 	err := InitNode(cfg)
 	require.NoError(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.NoError(t, err)
 
@@ -323,7 +323,7 @@ func TestNewWebSocketServer(t *testing.T) {
 	err := InitNode(cfg)
 	require.Nil(t, err)
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	stateSrvc, err := nodeInstance.createStateService(cfg)
 	require.Nil(t, err)
 

@@ -50,7 +50,7 @@ type Node struct {
 
 //go:generate mockgen -source=node.go -destination=mock_node_test.go -package=$GOPACKAGE
 
-type newNodeIface interface {
+type nodeBuilderIface interface {
 	nodeInitialised(string) bool
 	initNode(config *Config) error
 	createStateService(config *Config) (*state.Service, error)
@@ -74,16 +74,16 @@ type newNodeIface interface {
 	initialiseTelemetry(cfg *Config, stateSrvc *state.Service, networkSrvc *network.Service, sysSrvc *system.Service)
 }
 
-type node struct{}
+type nodeBuilder struct{}
 
 // NodeInitialized returns true if, within the configured data directory for the
 // node, the state database has been created and the genesis data has been loaded
 func NodeInitialized(basepath string) bool {
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	return nodeInstance.nodeInitialised(basepath)
 }
 
-func (node) nodeInitialised(basepath string) bool {
+func (nodeBuilder) nodeInitialised(basepath string) bool {
 	// check if key registry exists
 	registry := path.Join(basepath, utils.DefaultDatabaseDir, "KEYREGISTRY")
 
@@ -122,13 +122,13 @@ func (node) nodeInitialised(basepath string) bool {
 
 // InitNode initialise the node with given Config
 func InitNode(cfg *Config) error {
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	return nodeInstance.initNode(cfg)
 }
 
 // InitNode initialises a new dot node from the provided dot node configuration
 // and JSON formatted genesis file.
-func (node) initNode(cfg *Config) error {
+func (nodeBuilder) initNode(cfg *Config) error {
 	logger.Patch(log.SetLevel(cfg.Global.LogLvl))
 	logger.Infof(
 		"🕸️ initialising node with name %s, id %s, base path %s and genesis %s...",
@@ -216,10 +216,10 @@ func LoadGlobalNodeName(basepath string) (nodename string, err error) {
 
 // NewNode to create node based on given Config
 func NewNode(cfg *Config, ks *keystore.GlobalKeystore) (*Node, error) {
-	return newNode(cfg, ks, node{})
+	return newNode(cfg, ks, nodeBuilder{})
 }
 
-func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, error) {
+func newNode(cfg *Config, ks *keystore.GlobalKeystore, nbi nodeBuilderIface) (*Node, error) {
 	// set garbage collection percent to 10%
 	// can be overwritten by setting the GOGC env variable, which defaults to 100
 	prev := debug.SetGCPercent(10)
@@ -227,8 +227,8 @@ func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, 
 		debug.SetGCPercent(prev)
 	}
 
-	if !nn.nodeInitialised(cfg.Global.BasePath) {
-		err := nn.initNode(cfg)
+	if !nbi.nodeInitialised(cfg.Global.BasePath) {
+		err := nbi.initNode(cfg)
 		if err != nil {
 			return nil, err
 		}
@@ -245,7 +245,7 @@ func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, 
 		networkSrvc *network.Service
 	)
 
-	stateSrvc, err := nn.createStateService(cfg)
+	stateSrvc, err := nbi.createStateService(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create state service: %s", err)
 	}
@@ -253,7 +253,7 @@ func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, 
 	// check if network service is enabled
 	if enabled := networkServiceEnabled(cfg); enabled {
 		// create network service and append network service to node services
-		networkSrvc, err = nn.createNetworkService(cfg, stateSrvc)
+		networkSrvc, err = nbi.createNetworkService(cfg, stateSrvc)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create network service: %s", err)
 		}
@@ -264,40 +264,40 @@ func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, 
 	}
 
 	// create runtime
-	ns, err := nn.createRuntimeStorage(stateSrvc)
+	ns, err := nbi.createRuntimeStorage(stateSrvc)
 	if err != nil {
 		return nil, err
 	}
 
-	err = nn.loadRuntime(cfg, ns, stateSrvc, ks, networkSrvc)
+	err = nbi.loadRuntime(cfg, ns, stateSrvc, ks, networkSrvc)
 	if err != nil {
 		return nil, err
 	}
 
-	ver, err := nn.createBlockVerifier(stateSrvc)
+	ver, err := nbi.createBlockVerifier(stateSrvc)
 	if err != nil {
 		return nil, err
 	}
 
-	dh, err := nn.createDigestHandler(stateSrvc)
+	dh, err := nbi.createDigestHandler(stateSrvc)
 	if err != nil {
 		return nil, err
 	}
 	nodeSrvcs = append(nodeSrvcs, dh)
 
-	coreSrvc, err := nn.createCoreService(cfg, ks, stateSrvc, networkSrvc, dh)
+	coreSrvc, err := nbi.createCoreService(cfg, ks, stateSrvc, networkSrvc, dh)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create core service: %s", err)
 	}
 	nodeSrvcs = append(nodeSrvcs, coreSrvc)
 
-	fg, err := nn.createGRANDPAService(cfg, stateSrvc, dh, ks.Gran, networkSrvc)
+	fg, err := nbi.createGRANDPAService(cfg, stateSrvc, dh, ks.Gran, networkSrvc)
 	if err != nil {
 		return nil, err
 	}
 	nodeSrvcs = append(nodeSrvcs, fg)
 
-	syncer, err := nn.newSyncService(cfg, stateSrvc, fg, ver, coreSrvc, networkSrvc)
+	syncer, err := nbi.newSyncService(cfg, stateSrvc, fg, ver, coreSrvc, networkSrvc)
 	if err != nil {
 		return nil, err
 	}
@@ -308,13 +308,13 @@ func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, 
 	}
 	nodeSrvcs = append(nodeSrvcs, syncer)
 
-	bp, err := nn.createBABEService(cfg, stateSrvc, ks.Babe, coreSrvc)
+	bp, err := nbi.createBABEService(cfg, stateSrvc, ks.Babe, coreSrvc)
 	if err != nil {
 		return nil, err
 	}
 	nodeSrvcs = append(nodeSrvcs, bp)
 
-	sysSrvc, err := nn.createSystemService(&cfg.System, stateSrvc)
+	sysSrvc, err := nbi.createSystemService(&cfg.System, stateSrvc)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create system service: %s", err)
 	}
@@ -323,7 +323,7 @@ func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, 
 	// check if rpc service is enabled
 	if enabled := cfg.RPC.isRPCEnabled() || cfg.RPC.isWSEnabled(); enabled {
 		var rpcSrvc *rpc.HTTPServer
-		rpcSrvc, err = nn.createRPCService(cfg, ns, stateSrvc, coreSrvc, networkSrvc, bp, sysSrvc, fg)
+		rpcSrvc, err = nbi.createRPCService(cfg, ns, stateSrvc, coreSrvc, networkSrvc, bp, sysSrvc, fg)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create rpc service: %s", err)
 		}
@@ -359,12 +359,12 @@ func newNode(cfg *Config, ks *keystore.GlobalKeystore, nn newNodeIface) (*Node, 
 		metrics.PublishMetrics(address)
 	}
 
-	nn.initialiseTelemetry(cfg, stateSrvc, networkSrvc, sysSrvc)
+	nbi.initialiseTelemetry(cfg, stateSrvc, networkSrvc, sysSrvc)
 
 	return node, nil
 }
 
-func (node) initialiseTelemetry(cfg *Config, stateSrvc *state.Service, networkSrvc *network.Service,
+func (nodeBuilder) initialiseTelemetry(cfg *Config, stateSrvc *state.Service, networkSrvc *network.Service,
 	sysSrvc *system.Service) {
 	gd, err := stateSrvc.Base.LoadGenesisData()
 	if err != nil {
@@ -458,7 +458,7 @@ func (n *Node) Stop() {
 	n.wg.Done()
 }
 
-func (node) loadRuntime(cfg *Config, ns *runtime.NodeStorage,
+func (nodeBuilder) loadRuntime(cfg *Config, ns *runtime.NodeStorage,
 	stateSrvc *state.Service, ks *keystore.GlobalKeystore,
 	net *network.Service) error {
 	blocks := stateSrvc.Block.GetNonFinalisedBlocks()

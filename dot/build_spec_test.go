@@ -88,7 +88,7 @@ func TestBuildFromDB(t *testing.T) {
 	// initialise node (initialise state database and load genesis data)
 	cfg := NewTestConfig(t)
 	cfg.Init.Genesis = "../chain/gssmr/genesis.json"
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	assert.NoError(t, err)
 

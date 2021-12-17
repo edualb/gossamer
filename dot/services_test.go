@@ -42,7 +42,7 @@ func Test_createBABEService(t *testing.T) {
 	cfg.Core.Roles = types.FullNodeRole
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -125,7 +125,7 @@ func Test_createBlockVerifier(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -182,7 +182,7 @@ func Test_createCoreService(t *testing.T) {
 	cfg.Core.GrandpaAuthority = false
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -255,7 +255,7 @@ func Test_createDigestHandler(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -379,7 +379,7 @@ func Test_createNetworkService(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -435,7 +435,7 @@ func Test_createRPCService(t *testing.T) {
 	cfg.Core.GrandpaAuthority = false
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -495,7 +495,7 @@ func Test_createRuntime(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -577,7 +577,7 @@ func Test_createRuntimeStorage(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -626,7 +626,7 @@ func Test_createStateService(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -680,7 +680,7 @@ func Test_createSystemService(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
@@ -766,7 +766,7 @@ func Test_newSyncService(t *testing.T) {
 
 	cfg.Init.Genesis = genFile.Name()
 
-	nodeInstance := node{}
+	nodeInstance := nodeBuilder{}
 	err := nodeInstance.initNode(cfg)
 	require.NoError(t, err)
 
