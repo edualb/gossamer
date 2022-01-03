@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/ChainSafe/gossamer/dot/state"
-	"github.com/ChainSafe/gossamer/lib/utils"
 
 	"github.com/ChainSafe/gossamer/internal/log"
 	"github.com/stretchr/testify/require"
@@ -17,12 +16,9 @@ import (
 
 // test buildIdentity method
 func TestBuildIdentity(t *testing.T) {
-	testDir := utils.NewTestDir(t)
-	defer utils.RemoveTestDir(t)
-
 	configA := &Config{
 		logger:   log.New(log.SetWriter(io.Discard)),
-		BasePath: testDir,
+		BasePath: t.TempDir(),
 	}
 
 	err := configA.buildIdentity()
@@ -32,7 +28,7 @@ func TestBuildIdentity(t *testing.T) {
 
 	configB := &Config{
 		logger:   log.New(log.SetWriter(io.Discard)),
-		BasePath: testDir,
+		BasePath: t.TempDir(),
 	}
 
 	err = configB.buildIdentity()
@@ -71,8 +67,7 @@ func TestBuildIdentity(t *testing.T) {
 
 // test build configuration method
 func TestBuild(t *testing.T) {
-	testBasePath := utils.NewTestBasePath(t, "node")
-	defer utils.RemoveTestDir(t)
+	testBasePath := t.TempDir()
 
 	testBlockState := &state.BlockState{}
 	testRandSeed := int64(1)

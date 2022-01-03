@@ -4,7 +4,6 @@
 package network
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/ChainSafe/gossamer/dot/peerset"
-	"github.com/ChainSafe/gossamer/lib/utils"
 )
 
 func TestMinPeers(t *testing.T) {
@@ -22,7 +20,7 @@ func TestMinPeers(t *testing.T) {
 	nodes := make([]*Service, 2)
 	for i := range nodes {
 		config := &Config{
-			BasePath:    utils.NewTestBasePath(t, fmt.Sprintf("node%d", i)),
+			BasePath:    t.TempDir(),
 			Port:        7000 + uint16(i),
 			NoBootstrap: true,
 			NoMDNS:      true,
@@ -35,7 +33,7 @@ func TestMinPeers(t *testing.T) {
 	addrs1 := nodes[1].host.multiaddrs()[0]
 
 	configB := &Config{
-		BasePath:  utils.NewTestBasePath(t, "nodeB"),
+		BasePath:  t.TempDir(),
 		Port:      7002,
 		Bootnodes: []string{addrs.String(), addrs1.String()},
 		NoMDNS:    true,
@@ -59,7 +57,7 @@ func TestMaxPeers(t *testing.T) {
 	nodes := make([]*Service, max+2)
 	for i := range nodes {
 		config := &Config{
-			BasePath:    utils.NewTestBasePath(t, fmt.Sprintf("node%d", i)),
+			BasePath:    t.TempDir(),
 			Port:        7000 + uint16(i),
 			NoBootstrap: true,
 			NoMDNS:      true,
@@ -126,7 +124,7 @@ func TestPersistentPeers(t *testing.T) {
 	}
 
 	configA := &Config{
-		BasePath:    utils.NewTestBasePath(t, "node-a"),
+		BasePath:    t.TempDir(),
 		Port:        7000,
 		NoBootstrap: true,
 		NoMDNS:      true,
@@ -135,7 +133,7 @@ func TestPersistentPeers(t *testing.T) {
 
 	addrs := nodeA.host.multiaddrs()
 	configB := &Config{
-		BasePath:        utils.NewTestBasePath(t, "node-b"),
+		BasePath:        t.TempDir(),
 		Port:            7001,
 		NoMDNS:          true,
 		PersistentPeers: []string{addrs[0].String()},
@@ -161,9 +159,8 @@ func TestRemovePeer(t *testing.T) {
 		t.Skip() // this sometimes fails on CI
 	}
 
-	basePathA := utils.NewTestBasePath(t, "nodeA")
 	configA := &Config{
-		BasePath:    basePathA,
+		BasePath:    t.TempDir(),
 		Port:        7001,
 		NoBootstrap: true,
 		NoMDNS:      true,
@@ -174,9 +171,8 @@ func TestRemovePeer(t *testing.T) {
 
 	addrA := nodeA.host.multiaddrs()[0]
 
-	basePathB := utils.NewTestBasePath(t, "nodeB")
 	configB := &Config{
-		BasePath:  basePathB,
+		BasePath:  t.TempDir(),
 		Port:      7002,
 		Bootnodes: []string{addrA.String()},
 		NoMDNS:    true,
@@ -203,7 +199,7 @@ func TestSetReservedPeer(t *testing.T) {
 	nodes := make([]*Service, 3)
 	for i := range nodes {
 		config := &Config{
-			BasePath:    utils.NewTestBasePath(t, fmt.Sprintf("node%d", i)),
+			BasePath:    t.TempDir(),
 			Port:        7000 + uint16(i),
 			NoBootstrap: true,
 			NoMDNS:      true,
@@ -216,9 +212,8 @@ func TestSetReservedPeer(t *testing.T) {
 	addrB := nodes[1].host.multiaddrs()[0]
 	addrC := nodes[2].host.addrInfo()
 
-	basePathD := utils.NewTestBasePath(t, "node3")
 	config := &Config{
-		BasePath:        basePathD,
+		BasePath:        t.TempDir(),
 		Port:            7004,
 		NoMDNS:          true,
 		PersistentPeers: []string{addrA.String(), addrB.String()},

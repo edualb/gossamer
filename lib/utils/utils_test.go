@@ -31,8 +31,7 @@ func TestExpandDir(t *testing.T) {
 	require.NotEqual(t, testDirA, expandedDirA)
 	require.Equal(t, strings.Contains(expandedDirA, homeDir), true)
 
-	testDirB := NewTestBasePath(t, "test")
-	defer RemoveTestDir(t)
+	testDirB := t.TempDir()
 
 	expandedDirB := ExpandDir(testDirB)
 
@@ -42,8 +41,7 @@ func TestExpandDir(t *testing.T) {
 
 // TestBasePath tests the BasePath method
 func TestBasePath(t *testing.T) {
-	testDir := NewTestBasePath(t, "test")
-	defer RemoveTestDir(t)
+	testDir := t.TempDir()
 
 	homeDir := HomeDir()
 	basePath := BasePath(testDir)
@@ -54,8 +52,7 @@ func TestBasePath(t *testing.T) {
 
 // TestKeystoreDir tests the KeystoreDir method
 func TestKeystoreDir(t *testing.T) {
-	testDir := NewTestBasePath(t, "test")
-	defer RemoveTestDir(t)
+	testDir := t.TempDir()
 
 	homeDir := HomeDir()
 	basePath := BasePath(testDir)

@@ -7,8 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ChainSafe/gossamer/lib/utils"
-
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,10 +16,8 @@ func TestGossip(t *testing.T) {
 		t.Skip("skipping TestGossip; currently, nothing is gossiped")
 	}
 
-	basePathA := utils.NewTestBasePath(t, "nodeA")
-
 	configA := &Config{
-		BasePath:    basePathA,
+		BasePath:    t.TempDir(),
 		Port:        7001,
 		NoBootstrap: true,
 		NoMDNS:      true,
@@ -31,9 +27,8 @@ func TestGossip(t *testing.T) {
 	handlerA := newTestStreamHandler(testBlockAnnounceMessageDecoder)
 	nodeA.host.registerStreamHandler(nodeA.host.protocolID, handlerA.handleStream)
 
-	basePathB := utils.NewTestBasePath(t, "nodeB")
 	configB := &Config{
-		BasePath:    basePathB,
+		BasePath:    t.TempDir(),
 		Port:        7002,
 		NoBootstrap: true,
 		NoMDNS:      true,
@@ -52,9 +47,8 @@ func TestGossip(t *testing.T) {
 	}
 	require.NoError(t, err)
 
-	basePathC := utils.NewTestBasePath(t, "nodeC")
 	configC := &Config{
-		BasePath:    basePathC,
+		BasePath:    t.TempDir(),
 		Port:        7003,
 		NoBootstrap: true,
 		NoMDNS:      true,
