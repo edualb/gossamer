@@ -58,11 +58,9 @@ var (
 )
 
 func newNetworkService(t *testing.T) *network.Service {
-	testDir := path.Join(os.TempDir(), "test_data")
-
 	cfg := &network.Config{
 		BlockState:         network.NewMockBlockState(nil),
-		BasePath:           testDir,
+		BasePath:           t.TempDir(),
 		Syncer:             network.NewMockSyncer(),
 		TransactionHandler: network.NewMockTransactionHandler(),
 		SlotDuration:       time.Second,
