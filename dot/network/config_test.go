@@ -11,14 +11,16 @@ import (
 	"github.com/ChainSafe/gossamer/dot/state"
 
 	"github.com/ChainSafe/gossamer/internal/log"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-// test buildIdentity method
 func TestBuildIdentity(t *testing.T) {
+	testDir := t.TempDir()
+
 	configA := &Config{
 		logger:   log.New(log.SetWriter(io.Discard)),
-		BasePath: t.TempDir(),
+		BasePath: testDir,
 	}
 
 	err := configA.buildIdentity()
@@ -28,7 +30,7 @@ func TestBuildIdentity(t *testing.T) {
 
 	configB := &Config{
 		logger:   log.New(log.SetWriter(io.Discard)),
-		BasePath: t.TempDir(),
+		BasePath: testDir,
 	}
 
 	err = configB.buildIdentity()
@@ -36,9 +38,7 @@ func TestBuildIdentity(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(configA.privateKey, configB.privateKey) {
-		t.Error("Private keys should match")
-	}
+	assert.Equal(t, configA.privateKey, configB.privateKey)
 
 	configC := &Config{
 		logger:   log.New(log.SetWriter(io.Discard)),
