@@ -772,7 +772,7 @@ func TestUpdateConfigFromGenesisJSON(t *testing.T) {
 	ctx, err := newTestContext(
 		t.Name(),
 		[]string{"config", "genesis", "name"},
-		[]interface{}{testCfgFile.Name(), genFile.Name(), testCfg.Global.Name},
+		[]interface{}{testCfgFile.Name(), genFile, testCfg.Global.Name},
 	)
 	require.Nil(t, err)
 
@@ -797,7 +797,7 @@ func TestUpdateConfigFromGenesisJSON(t *testing.T) {
 			FinalityGadgetLvl: log.Info,
 		},
 		Init: dot.InitConfig{
-			Genesis: genFile.Name(),
+			Genesis: genFile,
 		},
 		Account: testCfg.Account,
 		Core:    testCfg.Core,
@@ -810,7 +810,7 @@ func TestUpdateConfigFromGenesisJSON(t *testing.T) {
 	cfg, err := createDotConfig(ctx)
 	require.Nil(t, err)
 
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 	updateDotConfigFromGenesisJSONRaw(*dotConfigToToml(testCfg), cfg)
 	cfg.System = types.SystemInfo{}
 	require.Equal(t, expected, cfg)
@@ -874,7 +874,7 @@ func TestUpdateConfigFromGenesisData(t *testing.T) {
 	ctx, err := newTestContext(
 		t.Name(),
 		[]string{"config", "genesis", "name"},
-		[]interface{}{testCfgFile.Name(), genFile.Name(), testCfg.Global.Name},
+		[]interface{}{testCfgFile.Name(), genFile, testCfg.Global.Name},
 	)
 	require.Nil(t, err)
 
@@ -899,7 +899,7 @@ func TestUpdateConfigFromGenesisData(t *testing.T) {
 			FinalityGadgetLvl: log.Info,
 		},
 		Init: dot.InitConfig{
-			Genesis: genFile.Name(),
+			Genesis: genFile,
 		},
 		Account: testCfg.Account,
 		Core:    testCfg.Core,
@@ -921,12 +921,12 @@ func TestUpdateConfigFromGenesisData(t *testing.T) {
 	cfg, err := createDotConfig(ctx)
 	require.Nil(t, err)
 
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	db, err := utils.SetupDatabase(cfg.Global.BasePath, false)
 	require.Nil(t, err)
 
-	gen, err := genesis.NewGenesisFromJSONRaw(genFile.Name())
+	gen, err := genesis.NewGenesisFromJSONRaw(genFile)
 	require.Nil(t, err)
 
 	err = state.NewBaseState(db).StoreGenesisData(gen.GenesisData())

@@ -25,9 +25,8 @@ func TestCreateStateService(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := NewTestGenesisRawFile(t, cfg)
-	require.NotNil(t, genFile)
 
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	err := InitNode(cfg)
 	require.Nil(t, err)
@@ -43,12 +42,11 @@ func TestCreateCoreService(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := NewTestGenesisRawFile(t, cfg)
-	require.NotNil(t, genFile)
 
 	cfg.Core.Roles = types.FullNodeRole
 	cfg.Core.BabeAuthority = false
 	cfg.Core.GrandpaAuthority = false
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	err := InitNode(cfg)
 	require.NoError(t, err)
@@ -76,9 +74,8 @@ func TestCreateBlockVerifier(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := newTestGenesisFile(t, cfg)
-	require.NotNil(t, genFile)
 
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	err := InitNode(cfg)
 	require.NoError(t, err)
@@ -95,9 +92,8 @@ func TestCreateSyncService(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := newTestGenesisFile(t, cfg)
-	require.NotNil(t, genFile)
 
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	err := InitNode(cfg)
 	require.NoError(t, err)
@@ -127,9 +123,8 @@ func TestCreateNetworkService(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := NewTestGenesisRawFile(t, cfg)
-	require.NotNil(t, genFile)
 
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	err := InitNode(cfg)
 	require.NoError(t, err)
@@ -148,12 +143,11 @@ func TestCreateRPCService(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := NewTestGenesisRawFile(t, cfg)
-	require.NotNil(t, genFile)
 
 	cfg.Core.Roles = types.FullNodeRole
 	cfg.Core.BabeAuthority = false
 	cfg.Core.GrandpaAuthority = false
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	err := InitNode(cfg)
 	require.NoError(t, err)
@@ -191,10 +185,9 @@ func TestCreateBABEService(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := NewTestGenesisRawFile(t, cfg)
-	require.NotNil(t, genFile)
 
 	cfg.Core.Roles = types.FullNodeRole
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	err := InitNode(cfg)
 	require.NoError(t, err)
@@ -228,10 +221,9 @@ func TestCreateGrandpaService(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := NewTestGenesisRawFile(t, cfg)
-	require.NotNil(t, genFile)
 
 	cfg.Core.Roles = types.AuthorityRole
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 
 	err := InitNode(cfg)
 	require.NoError(t, err)
@@ -293,12 +285,11 @@ func TestNewWebSocketServer(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	genFile := NewTestGenesisRawFile(t, cfg)
-	require.NotNil(t, genFile)
 
 	cfg.Core.Roles = types.FullNodeRole
 	cfg.Core.BabeAuthority = false
 	cfg.Core.GrandpaAuthority = false
-	cfg.Init.Genesis = genFile.Name()
+	cfg.Init.Genesis = genFile
 	cfg.RPC.External = false
 	cfg.RPC.WS = true
 	cfg.RPC.WSExternal = false
