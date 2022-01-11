@@ -24,8 +24,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// newTestGenesis returns a test genesis instance using "gssmr" raw data
-func newTestGenesis(t *testing.T) *genesis.Genesis {
+// NewTestGenesis returns a test genesis instance using "gssmr" raw data
+func NewTestGenesis(t *testing.T) *genesis.Genesis {
 	fp := utils.GetGssmrGenesisRawPath()
 
 	gssmrGen, err := genesis.NewGenesisFromJSONRaw(fp)
@@ -69,8 +69,8 @@ func NewTestGenesisRawFile(t *testing.T, cfg *Config) *os.File {
 	return file
 }
 
-// newTestGenesisFile returns a human-readable test genesis file using "gssmr" human readable data
-func newTestGenesisFile(t *testing.T, cfg *Config) *os.File {
+// NewTestGenesisFile returns a human-readable test genesis file using "gssmr" human readable data
+func NewTestGenesisFile(t *testing.T, cfg *Config) *os.File {
 	dir := utils.NewTestDir(t)
 
 	file, err := os.CreateTemp(dir, "genesis-")
@@ -109,7 +109,7 @@ func NewTestGenesisAndRuntime(t *testing.T) string {
 	runtimeData, err := os.ReadFile(filepath.Clean(runtimeFilePath))
 	require.Nil(t, err)
 
-	gen := newTestGenesis(t)
+	gen := NewTestGenesis(t)
 	hex := hex.EncodeToString(runtimeData)
 
 	gen.Genesis.Raw = map[string]map[string]string{}
@@ -133,7 +133,8 @@ func NewTestGenesisAndRuntime(t *testing.T) string {
 
 // NewTestConfig returns a new test configuration using the provided basepath
 func NewTestConfig(t *testing.T) *Config {
-	dir := utils.NewTestDir(t)
+	//dir := utils.NewTestDir(t)
+	dir := t.TempDir()
 
 	cfg := &Config{
 		Global: GlobalConfig{
@@ -153,19 +154,18 @@ func NewTestConfig(t *testing.T) *Config {
 	return cfg
 }
 
-// newTestConfigWithFile returns a new test configuration and a temporary configuration file
-func newTestConfigWithFile(t *testing.T) (*Config, *os.File) {
+// NewTestConfigWithFile returns a new test configuration and a temporary configuration file
+func NewTestConfigWithFile(t *testing.T) (*Config, *os.File) {
 	cfg := NewTestConfig(t)
 
 	file, err := os.CreateTemp(cfg.Global.BasePath, "config-")
 	require.NoError(t, err)
-
-	cfgFile := exportConfig(cfg, file.Name())
+	cfgFile := ExportConfig(cfg, file.Name())
 	return cfg, cfgFile
 }
 
-// exportConfig exports a dot configuration to a toml configuration file
-func exportConfig(cfg *Config, fp string) *os.File {
+// ExportConfig exports a dot configuration to a toml configuration file
+func ExportConfig(cfg *Config, fp string) *os.File {
 	raw, err := toml.Marshal(*cfg)
 	if err != nil {
 		logger.Errorf("failed to marshal configuration: %s", err)
