@@ -38,12 +38,12 @@ func NewMockBlockState(n *big.Int) *MockBlockState {
 	}
 
 	m := new(MockBlockState)
-	m.On("BestBlockHeader").Return(header, nil)
-	m.On("GetHighestFinalisedHeader").Return(header, nil)
-	m.On("GenesisHash").Return(common.NewHash([]byte{}))
-	m.On("BestBlockNumber").Return(big.NewInt(1), nil)
-	m.On("HasBlockBody", mock.AnythingOfType("common.Hash")).Return(false, nil)
-	m.On("GetHashByNumber", mock.AnythingOfType("*big.Int")).Return(common.Hash{}, nil)
+	m.On("BestBlockHeader").Return(header, nil)                                         //nolint
+	m.On("GetHighestFinalisedHeader").Return(header, nil)                               //nolint
+	m.On("GenesisHash").Return(common.NewHash([]byte{}))                                //nolint
+	m.On("BestBlockNumber").Return(big.NewInt(1), nil)                                  //nolint
+	m.On("HasBlockBody", mock.AnythingOfType("common.Hash")).Return(false, nil)         //nolint
+	m.On("GetHashByNumber", mock.AnythingOfType("*big.Int")).Return(common.Hash{}, nil) //nolint
 
 	return m
 }
@@ -52,32 +52,32 @@ func NewMockBlockState(n *big.Int) *MockBlockState {
 func NewMockSyncer() *MockSyncer {
 	mocksyncer := new(MockSyncer)
 	mocksyncer.
-		On("HandleBlockAnnounceHandshake",
+		On("HandleBlockAnnounceHandshake", //nolint
 			mock.AnythingOfType("peer.ID"),
 			mock.AnythingOfType("*network.BlockAnnounceHandshake")).
 		Return(nil, nil)
 	mocksyncer.
-		On("HandleBlockAnnounce",
+		On("HandleBlockAnnounce", //nolint
 			mock.AnythingOfType("peer.ID"),
 			mock.AnythingOfType("*network.BlockAnnounceMessage")).
 		Return(nil, nil)
 	mocksyncer.
-		On("CreateBlockResponse",
+		On("CreateBlockResponse", //nolint
 			mock.AnythingOfType("*network.BlockRequestMessage")).
 		Return(testBlockResponseMessage(), nil)
 	mocksyncer.
-		On("IsSynced").Return(false)
+		On("IsSynced").Return(false) //nolint
 	return mocksyncer
 }
 
 // NewMockTransactionHandler create and return a network TransactionHandler interface
 func NewMockTransactionHandler() *MockTransactionHandler {
 	mocktxhandler := new(MockTransactionHandler)
-	mocktxhandler.On("HandleTransactionMessage",
+	mocktxhandler.On("HandleTransactionMessage", //nolint
 		mock.AnythingOfType("peer.ID"),
 		mock.AnythingOfType("*network.TransactionMessage")).
 		Return(true, nil)
-	mocktxhandler.On("TransactionsCount").Return(0)
+	mocktxhandler.On("TransactionsCount").Return(0) //nolint
 	return mocktxhandler
 }
 

@@ -4,9 +4,9 @@
 package node
 
 import (
-	"bytes"
+	"bytes" //nolint
 	"fmt"
-	"hash"
+	"hash" //nolint
 	"io"
 
 	"github.com/ChainSafe/gossamer/internal/trie/codec"
@@ -20,7 +20,7 @@ import (
 func (l *Leaf) Encode(buffer Buffer) (err error) {
 	l.encodingMu.RLock()
 	if !l.dirty && l.encoding != nil {
-		_, err = buffer.Write(l.encoding)
+		_, err = buffer.Write(l.encoding) //nolint
 		l.encodingMu.RUnlock()
 		if err != nil {
 			return fmt.Errorf("cannot write stored encoding to buffer: %w", err)
@@ -35,7 +35,7 @@ func (l *Leaf) Encode(buffer Buffer) (err error) {
 	}
 
 	keyLE := codec.NibblesToKeyLE(l.Key)
-	_, err = buffer.Write(keyLE)
+	_, err = buffer.Write(keyLE) //nolint
 	if err != nil {
 		return fmt.Errorf("cannot write LE key to buffer: %w", err)
 	}
@@ -45,7 +45,7 @@ func (l *Leaf) Encode(buffer Buffer) (err error) {
 		return fmt.Errorf("cannot scale marshal value: %w", err)
 	}
 
-	_, err = buffer.Write(encodedValue)
+	_, err = buffer.Write(encodedValue) //nolint
 	if err != nil {
 		return fmt.Errorf("cannot write scale encoded value to buffer: %w", err)
 	}

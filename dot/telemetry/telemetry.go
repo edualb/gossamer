@@ -144,8 +144,8 @@ func (h *Handler) startListening() {
 				return
 			}
 			for _, conn := range h.connections {
-				conn.Lock()
-				defer conn.Unlock()
+				conn.Lock()         //nolint
+				defer conn.Unlock() //nolint
 
 				err = conn.wsconn.WriteMessage(websocket.TextMessage, msgBytes)
 				if err != nil {

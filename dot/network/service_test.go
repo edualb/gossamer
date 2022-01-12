@@ -73,11 +73,11 @@ func createTestService(t *testing.T, cfg *Config) (srvc *Service) {
 
 	if cfg.TransactionHandler == nil {
 		mocktxhandler := &MockTransactionHandler{}
-		mocktxhandler.On("HandleTransactionMessage",
+		mocktxhandler.On("HandleTransactionMessage", //nolint
 			mock.AnythingOfType("peer.ID"),
 			mock.AnythingOfType("*network.TransactionMessage")).
 			Return(true, nil)
-		mocktxhandler.On("TransactionsCount").Return(0)
+		mocktxhandler.On("TransactionsCount").Return(0) //nolint
 		cfg.TransactionHandler = mocktxhandler
 	}
 
@@ -264,16 +264,16 @@ func TestService_Health(t *testing.T) {
 		NoMDNS:      true,
 	}
 	mocksyncer := &MockSyncer{}
-	mocksyncer.On("SetSyncing", mock.AnythingOfType("bool"))
+	mocksyncer.On("SetSyncing", mock.AnythingOfType("bool")) //nolint
 
 	s := createTestService(t, config)
 	s.syncer = mocksyncer
 
-	mocksyncer.On("IsSynced").Return(false).Once()
+	mocksyncer.On("IsSynced").Return(false).Once() //nolint
 	h := s.Health()
 	require.Equal(t, true, h.IsSyncing)
 
-	mocksyncer.On("IsSynced").Return(true).Once()
+	mocksyncer.On("IsSynced").Return(true).Once() //nolint
 	h = s.Health()
 	require.Equal(t, false, h.IsSyncing)
 }
@@ -337,12 +337,12 @@ func TestSerivceIsMajorSyncMetrics(t *testing.T) {
 		syncer: mocksyncer,
 	}
 
-	mocksyncer.On("IsSynced").Return(false).Once()
+	mocksyncer.On("IsSynced").Return(false).Once() //nolint
 	m := node.CollectGauge()
 
 	require.Equal(t, int64(1), m[gssmrIsMajorSyncMetric])
 
-	mocksyncer.On("IsSynced").Return(true).Once()
+	mocksyncer.On("IsSynced").Return(true).Once() //nolint
 	m = node.CollectGauge()
 
 	require.Equal(t, int64(0), m[gssmrIsMajorSyncMetric])

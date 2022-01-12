@@ -235,8 +235,8 @@ func (b *Service) EpochLength() uint64 {
 
 // Pause pauses the service ie. halts block production
 func (b *Service) Pause() error {
-	b.Lock()
-	defer b.Unlock()
+	b.Lock()         //nolint
+	defer b.Unlock() //nolint
 
 	if b.IsPaused() {
 		return nil
@@ -248,8 +248,8 @@ func (b *Service) Pause() error {
 
 // Resume resumes the service ie. resumes block production
 func (b *Service) Resume() error {
-	b.Lock()
-	defer b.Unlock()
+	b.Lock()         //nolint
+	defer b.Unlock() //nolint
 
 	if !b.IsPaused() {
 		return nil
@@ -277,8 +277,8 @@ func (b *Service) Stop() error {
 		return nil
 	}
 
-	b.Lock()
-	defer b.Unlock()
+	b.Lock()         //nolint
+	defer b.Unlock() //nolint
 
 	if b.ctx.Err() != nil {
 		return errors.New("service already stopped")
@@ -508,8 +508,8 @@ func (b *Service) handleSlot(epoch, slotNum uint64) error {
 		number:   slotNum,
 	}
 
-	b.storageState.Lock()
-	defer b.storageState.Unlock()
+	b.storageState.Lock()         //nolint
+	defer b.storageState.Unlock() //nolint
 
 	// set runtime trie before building block
 	// if block building is successful, store the resulting trie in the storage state

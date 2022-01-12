@@ -5,8 +5,8 @@ package node
 
 // Copy deep copies the branch.
 func (b *Branch) Copy() Node {
-	b.RLock()
-	defer b.RUnlock()
+	b.RLock()         //nolint
+	defer b.RUnlock() //nolint
 
 	cpy := &Branch{
 		Children:   b.Children, // copy interface pointers
@@ -41,8 +41,8 @@ func (b *Branch) Copy() Node {
 
 // Copy deep copies the leaf.
 func (l *Leaf) Copy() Node {
-	l.RLock()
-	defer l.RUnlock()
+	l.RLock()         //nolint
+	defer l.RUnlock() //nolint
 
 	l.encodingMu.RLock()
 	defer l.encodingMu.RUnlock()

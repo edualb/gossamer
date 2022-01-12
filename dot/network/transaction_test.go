@@ -29,11 +29,11 @@ func TestDecodeTransactionHandshake(t *testing.T) {
 func TestHandleTransactionMessage(t *testing.T) {
 	basePath := utils.NewTestBasePath(t, "nodeA")
 	mockhandler := &MockTransactionHandler{}
-	mockhandler.On("HandleTransactionMessage",
+	mockhandler.On("HandleTransactionMessage", //nolint
 		mock.AnythingOfType("peer.ID"),
 		mock.AnythingOfType("*network.TransactionMessage")).
 		Return(true, nil)
-	mockhandler.On("TransactionsCount").Return(0)
+	mockhandler.On("TransactionsCount").Return(0) //nolint
 
 	config := &Config{
 		BasePath:           basePath,
@@ -50,6 +50,6 @@ func TestHandleTransactionMessage(t *testing.T) {
 	}
 
 	s.handleTransactionMessage(peer.ID(""), msg)
-	mockhandler.AssertCalled(t, "HandleTransactionMessage",
+	mockhandler.AssertCalled(t, "HandleTransactionMessage", //nolint
 		mock.AnythingOfType("peer.ID"), msg)
 }
