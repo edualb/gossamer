@@ -106,6 +106,9 @@ type ChainSync interface {
 
 	// getHighestBlock returns the highest block or an error
 	getHighestBlock() (int64, error)
+
+	// getStartingBlock returns the lowest block currently attemping to be synced or an error
+	getStartingBlock() (int64, error)
 }
 
 type chainSync struct {
@@ -972,6 +975,22 @@ func (cs *chainSync) getHighestBlock() (int64, error) {
 	}
 
 	return highestBlock.Int64(), nil
+}
+
+func (cs *chainSync) getStartingBlock() (int64, error) {
+	cs.RLock()
+	defer cs.RUnlock()
+
+	if cs.workerState == nil {
+		return 0, errEmptyWorkerState
+	}
+
+	w, err := cs.workerState.getStartWorker()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get start worker from work state: %w", err)
+	}
+
+	return w.startNumber.Int64(), nil
 }
 
 func workerToRequests(w *worker) ([]*network.BlockRequestMessage, error) {

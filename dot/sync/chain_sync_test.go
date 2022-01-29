@@ -964,3 +964,175 @@ func TestChainSync_highestBlock(t *testing.T) {
 		})
 	}
 }
+
+func TestChainSync_startingBlock(t *testing.T) {
+	type input struct {
+		workerState *workerState
+	}
+	type output struct {
+		startingBlock int64
+		err           error
+	}
+	type test struct {
+		name string
+		in   input
+		out  output
+	}
+	tests := []test{
+		{
+			name: "when has an empty workerState nil should return 0, errEmptyWorkerState",
+			in: input{
+				workerState: nil,
+			},
+			out: output{
+				startingBlock: 0,
+				err:           errEmptyWorkerState,
+			},
+		},
+		{
+			name: "when has an empty workerState.workers empty should return 0, errNoWorkers",
+			in: input{
+				workerState: &workerState{
+					workers: map[uint64]*worker{},
+				},
+			},
+			out: output{
+				startingBlock: 0,
+				err:           errNoWorkers,
+			},
+		},
+		{
+			name: "when has an empty workerState.workers nil should return 0, errNoWorkers",
+			in: input{
+				workerState: &workerState{
+					workers: nil,
+				},
+			},
+			out: output{
+				startingBlock: 0,
+				err:           errNoWorkers,
+			},
+		},
+		{
+			name: "when has one startWorker should return worker, nil",
+			in: input{
+				workerState: &workerState{
+					workers: map[uint64]*worker{
+						0: {
+							startNumber: big.NewInt(5),
+						},
+					},
+				},
+			},
+			out: output{
+				startingBlock: 5,
+				err:           nil,
+			},
+		},
+		{
+			name: "when has two startWorker (w1, w2) with w1.startNumber = 5 and w2.startNumber = nil should return worker, nil",
+			in: input{
+				workerState: &workerState{
+					workers: map[uint64]*worker{
+						0: {
+							startNumber: nil,
+						},
+						1: {
+							startNumber: big.NewInt(5),
+						},
+					},
+				},
+			},
+			out: output{
+				startingBlock: 5,
+				err:           nil,
+			},
+		},
+		{
+			name: "when has two startWorker (w1, w2) with w1.startNumber = nil and w2.startNumber = nil should return nil, errNoWorkers",
+			in: input{
+				workerState: &workerState{
+					workers: map[uint64]*worker{
+						0: {
+							startNumber: nil,
+						},
+						1: {
+							startNumber: nil,
+						},
+					},
+				},
+			},
+			out: output{
+				startingBlock: 0,
+				err:           errNoWorkers,
+			},
+		},
+		{
+			name: "when has two startWorker (w1, w2) with w1.startNumber = 8 and w2.startNumber = 3 should return 3, nil",
+			in: input{
+				workerState: &workerState{
+					workers: map[uint64]*worker{
+						0: {
+							startNumber: big.NewInt(8),
+						},
+						1: {
+							startNumber: big.NewInt(3),
+						},
+					},
+				},
+			},
+			out: output{
+				startingBlock: 3,
+				err:           nil,
+			},
+		},
+		{
+			name: "when has two startWorker (w1, w2) with w1.startNumber = 3 and w2.startNumber = 8 should return 3, nil",
+			in: input{
+				workerState: &workerState{
+					workers: map[uint64]*worker{
+						0: {
+							startNumber: big.NewInt(3),
+						},
+						1: {
+							startNumber: big.NewInt(8),
+						},
+					},
+				},
+			},
+			out: output{
+				startingBlock: 3,
+				err:           nil,
+			},
+		},
+		{
+			name: "when has two startWorker (w1, w2) with w1.startNumber = 8 and w2.startNumber = 8 should return 8, nil",
+			in: input{
+				workerState: &workerState{
+					workers: map[uint64]*worker{
+						0: {
+							startNumber: big.NewInt(8),
+						},
+						1: {
+							startNumber: big.NewInt(8),
+						},
+					},
+				},
+			},
+			out: output{
+				startingBlock: 8,
+				err:           nil,
+			},
+		},
+	}
+	for _, ts := range tests {
+		t.Run(ts.name, func(t *testing.T) {
+			cs, _ := newTestChainSync(t)
+			cs.workerState = ts.in.workerState
+
+			highestBlock, err := cs.getStartingBlock()
+			require.ErrorIs(t, err, ts.out.err)
+			require.Equal(t, highestBlock, ts.out.startingBlock)
+		})
+	}
+}

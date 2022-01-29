@@ -20,7 +20,7 @@ type workerState struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	sync.Mutex
+	sync.RWMutex
 	nextWorker uint64
 	workers    map[uint64]*worker
 }
@@ -61,6 +61,35 @@ func (s *workerState) reset() {
 		delete(s.workers, id)
 	}
 	s.nextWorker = 0
+}
+
+func (s *workerState) getStartWorker() (*worker, error) {
+	s.RLock()
+	defer s.RUnlock()
+
+	if len(s.workers) == 0 {
+		return nil, errNoWorkers
+	}
+
+	var worker *worker
+	for _, w := range s.workers {
+		if w.startNumber == nil {
+			continue
+		}
+		if worker == nil {
+			worker = w
+			continue
+		}
+		if w.startNumber.Cmp(worker.startNumber) == -1 {
+			worker = w
+		}
+	}
+
+	if worker == nil {
+		return nil, errNoWorkers
+	}
+
+	return worker, nil
 }
 
 // worker respresents a process that is attempting to sync from the specified start block to target block
