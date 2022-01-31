@@ -317,12 +317,10 @@ func TestSystemModule_SyncState(t *testing.T) {
 	mockBlockAPIErr.On("BestBlockHash").Return(hash)
 	mockBlockAPIErr.On("GetHeader", hash).Return(nil, errors.New("GetHeader Err"))
 
-	mockNetworkAPI := new(mocks.NetworkAPI)
-	mockNetworkAPI.On("StartingBlock").Return(int64(23))
-
 	ctrlSyncAPI := gomock.NewController(t)
 	mockSyncAPI := NewMockSyncAPI(ctrlSyncAPI)
 	mockSyncAPI.EXPECT().HighestBlock().Return(int64(21))
+	mockSyncAPI.EXPECT().StartingBlock().Return(int64(23))
 
 	type args struct {
 		r   *http.Request
@@ -337,7 +335,7 @@ func TestSystemModule_SyncState(t *testing.T) {
 	}{
 		{
 			name:      "OK",
-			sysModule: NewSystemModule(mockNetworkAPI, nil, nil, nil, nil, mockBlockAPI, mockSyncAPI),
+			sysModule: NewSystemModule(nil, nil, nil, nil, nil, mockBlockAPI, mockSyncAPI),
 			args: args{
 				req: &EmptyRequest{},
 			},
@@ -349,7 +347,7 @@ func TestSystemModule_SyncState(t *testing.T) {
 		},
 		{
 			name:      "Err",
-			sysModule: NewSystemModule(mockNetworkAPI, nil, nil, nil, nil, mockBlockAPIErr, nil),
+			sysModule: NewSystemModule(nil, nil, nil, nil, nil, mockBlockAPIErr, nil),
 			args: args{
 				req: &EmptyRequest{},
 			},

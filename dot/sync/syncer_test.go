@@ -229,3 +229,64 @@ func TestHighestBlock(t *testing.T) {
 		})
 	}
 }
+
+func TestStartingBlock(t *testing.T) {
+	type input struct {
+		startingBlock int64
+		err           error
+	}
+	type output struct {
+		startingBlock int64
+	}
+	type test struct {
+		name string
+		in   input
+		out  output
+	}
+	tests := []test{
+		{
+			name: "when *chainSync.getStartingBlock() returns 0, error should return 0",
+			in: input{
+				startingBlock: 0,
+				err:           errors.New("fake error"),
+			},
+			out: output{
+				startingBlock: 0,
+			},
+		},
+		{
+			name: "when *chainSync.getStartingBlock() returns 0, nil should return 0",
+			in: input{
+				startingBlock: 0,
+				err:           nil,
+			},
+			out: output{
+				startingBlock: 0,
+			},
+		},
+		{
+			name: "when *chainSync.getStartingBlock() returns 50, nil should return 50",
+			in: input{
+				startingBlock: 50,
+				err:           nil,
+			},
+			out: output{
+				startingBlock: 50,
+			},
+		},
+	}
+	for _, ts := range tests {
+		t.Run(ts.name, func(t *testing.T) {
+			s := newTestSyncer(t)
+
+			ctrl := gomock.NewController(t)
+			chainSync := NewMockChainSync(ctrl)
+			chainSync.EXPECT().getStartingBlock().Return(ts.in.startingBlock, ts.in.err)
+
+			s.chainSync = chainSync
+
+			result := s.StartingBlock()
+			require.Equal(t, result, ts.out.startingBlock)
+		})
+	}
+}

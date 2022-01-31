@@ -146,6 +146,15 @@ func (s *Service) HighestBlock() int64 {
 	return highestBlock
 }
 
+func (s *Service) StartingBlock() int64 {
+	startingBlock, err := s.chainSync.getStartingBlock()
+	if err != nil {
+		logger.Warnf("failed to get the starting block: %s", err)
+		return 0
+	}
+	return startingBlock
+}
+
 func reverseBlockData(data []*types.BlockData) {
 	for i, j := 0, len(data)-1; i < j; i, j = i+1, j-1 {
 		data[i], data[j] = data[j], data[i]

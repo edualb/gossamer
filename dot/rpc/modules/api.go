@@ -67,7 +67,6 @@ type NetworkAPI interface {
 	Stop() error
 	Start() error
 	IsStopped() bool
-	StartingBlock() int64
 	AddReservedPeers(addrs ...string) error
 	RemoveReservedPeers(addrs ...string) error
 }
@@ -158,4 +157,5 @@ type SyncStateAPI interface {
 // SyncAPI is the interface to interact with the sync service
 type SyncAPI interface {
 	HighestBlock() int64
+	StartingBlock() int64
 }

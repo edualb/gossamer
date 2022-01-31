@@ -237,7 +237,7 @@ func (sm *SystemModule) SyncState(r *http.Request, req *EmptyRequest, res *SyncS
 	*res = SyncStateResponse{
 		CurrentBlock:  uint32(h.Number.Int64()),
 		HighestBlock:  uint32(sm.syncAPI.HighestBlock()),
-		StartingBlock: uint32(sm.networkAPI.StartingBlock()),
+		StartingBlock: uint32(sm.syncAPI.StartingBlock()),
 	}
 	return nil
 }

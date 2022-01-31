@@ -46,3 +46,17 @@ func (mr *MockSyncAPIMockRecorder) HighestBlock() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HighestBlock", reflect.TypeOf((*MockSyncAPI)(nil).HighestBlock))
 }
+
+// StartingBlock mocks base method.
+func (m *MockSyncAPI) StartingBlock() int64 {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StartingBlock")
+	ret0, _ := ret[0].(int64)
+	return ret0
+}
+
+// StartingBlock indicates an expected call of StartingBlock.
+func (mr *MockSyncAPIMockRecorder) StartingBlock() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartingBlock", reflect.TypeOf((*MockSyncAPI)(nil).StartingBlock))
+}
